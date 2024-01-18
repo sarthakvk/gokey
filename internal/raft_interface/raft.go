@@ -5,13 +5,13 @@ import (
 
 	raft_lib "github.com/hashicorp/raft"
 
-	"github.com/sarthakvk/gokey/internal/key_store"
 	"github.com/sarthakvk/gokey/internal/logging"
 )
 
 const (
 	ElectionWaitDuration    = time.Duration(time.Millisecond * 10)
 	AddVoterTimeoutDuration = time.Duration(time.Millisecond * 500)
+	ApplyTimeout            = time.Duration(time.Second)
 )
 
 var logger = logging.GetLogger()
@@ -23,9 +23,7 @@ type Raft struct {
 }
 
 func (r *Raft) IsLeader() bool {
-	raftFuture := r.node.VerifyLeader()
-
-	return raftFuture.Error() == nil
+	return r.node.State() == raft_lib.Leader
 }
 
 // GetLeader will return the Address of the current leader
@@ -45,11 +43,10 @@ func (r *Raft) GetLeader() raft_lib.ServerAddress {
 
 // Creates a new raft node
 // TODO : Currently using default config, provide a way to configure the Raft node
-func NewRaft(raftID, address string) *Raft {
+func NewRaft(raftID, address string, fsm raft_lib.FSM) *Raft {
 	config := raft_lib.DefaultConfig()
 	config.LocalID = raft_lib.ServerID(raftID)
 
-	fsm := keystore.KeyStoreFSM{}
 	transport := NewTransport(address)
 
 	node, err := raft_lib.NewRaft(config, fsm, LogStore, StableStore, SnapshotStore, transport)
@@ -60,18 +57,6 @@ func NewRaft(raftID, address string) *Raft {
 	}
 
 	return &Raft{raftID: raft_lib.ServerID(raftID), node: node, transport: transport}
-}
-
-// Get latest configuration, panic if error
-func (r *Raft) getLatestConfiguration() raft_lib.Configuration {
-	configFuture := r.node.GetConfiguration()
-	err := configFuture.Error()
-
-	if err != nil {
-		logger.Error(err.Error())
-		panic(err)
-	}
-	return configFuture.Configuration()
 }
 
 // Bootstrap Cluster
@@ -104,9 +89,10 @@ func (r *Raft) AddVoter(raftID, address string) {
 	if err != nil {
 		logger.Debug("Failed to add voter raft node!")
 		logger.Error(err.Error())
-		return
 	}
 
 }
 
-func (r *Raft) Apply(cmd)
+func (r *Raft) Apply(cmd []byte) raft_lib.ApplyFuture {
+	return r.node.Apply(cmd, ApplyTimeout)
+}

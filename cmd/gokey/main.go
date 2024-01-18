@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	raft "github.com/sarthakvk/gokey/internal/raft_interface"
+	keystore "github.com/sarthakvk/gokey/internal/key_store"
 )
 
 var (
@@ -17,20 +17,19 @@ var (
 func main() {
 	flag.Parse()
 
-	node := raft.NewRaft(*raftID, *addr)
+	store := keystore.New(*raftID, *addr, *bootstrap)
 
 	if *bootstrap {
-		node.BootstrapCluster()
-		addPeers(node, *peerCount)
+		addPeers(store, *peerCount)
 	}
-	node.Run()
+	store.Run()
 }
 
-func addPeers(r *raft.Raft, count int) {
+func addPeers(store *keystore.KeyStore, count int) {
 	for i := 0; i < count; i++ {
 		var raftID, address string
 		println("Enter Peer: ", i+1)
 		fmt.Scan(&raftID, &address)
-		r.AddVoter(raftID, address)
+		store.AddVoterNodes(raftID, address)
 	}
 }
