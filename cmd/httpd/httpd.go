@@ -4,8 +4,13 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/sarthakvk/gokey/internal/adapters/httpd"
 	keystore "github.com/sarthakvk/gokey/internal/key_store"
 )
+
+func RunHttpDaemon(store *keystore.KeyStore) {
+	httpd.RunServer(store, 9000)
+}
 
 var (
 	bootstrap = flag.Bool("bootstrap", false, "Bootstrap Cluster")
@@ -22,7 +27,7 @@ func main() {
 	if *bootstrap {
 		addPeers(store, *peerCount)
 	}
-
+	RunHttpDaemon(store)
 }
 
 func addPeers(store *keystore.KeyStore, count int) {
