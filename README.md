@@ -1,6 +1,9 @@
 # Gokey: Distributed key-value store
 
-**Usage:**
+**Documentation**: For complete documentation, see the associated [Godoc](https://pkg.go.dev/github.com/sarthakvk/gokey)
+--
+
+**Usage:**  
  **This is still under development, don't use in PRODUCTION**
 
 * **Application Prerequisites:**
