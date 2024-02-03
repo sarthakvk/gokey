@@ -1,4 +1,4 @@
-#Gokey: Distributed key-value store
+# Gokey: Distributed key-value store
 
 **Usage:**
 
