@@ -1,6 +1,7 @@
 # Gokey: Distributed key-value store
 
 **Usage:**
+ **This is still under development, don't use in PRODUCTION**
 
 * **Application Prerequisites:**
   - Make sure go is installed version >= 1.21
