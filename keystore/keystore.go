@@ -4,8 +4,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/sarthakvk/gokey/internal/logging"
-	raft "github.com/sarthakvk/gokey/internal/raft_interface"
+	"github.com/sarthakvk/gokey/logging"
+	raft "github.com/sarthakvk/gokey/raft_interface"
 )
 
 var (

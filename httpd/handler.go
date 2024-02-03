@@ -3,7 +3,7 @@ package httpd
 import (
 	"net/http"
 
-	store "github.com/sarthakvk/gokey/internal/key_store"
+	store "github.com/sarthakvk/gokey/keystore"
 )
 
 // Handler for the KeyStore Commands, this is used to perform

@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/sarthakvk/gokey/internal/httpd"
-	keystore "github.com/sarthakvk/gokey/internal/key_store"
+
+	"github.com/sarthakvk/gokey/httpd"
+	keystore "github.com/sarthakvk/gokey/keystore"
 )
 
 func RunHttpDaemon(store *keystore.KeyStore, httpPort int) {
@@ -21,5 +22,6 @@ func main() {
 	flag.Parse()
 
 	store := keystore.New(*raftID, *addr, *bootstrap)
+
 	RunHttpDaemon(store, *httpPort)
 }

@@ -7,16 +7,16 @@ import (
 	"fmt"
 	"net/http"
 
-	key_store "github.com/sarthakvk/gokey/internal/key_store"
-	"github.com/sarthakvk/gokey/internal/logging"
+	"github.com/sarthakvk/gokey/keystore"
+	"github.com/sarthakvk/gokey/logging"
 )
 
 var (
-	Keystore *key_store.KeyStore
+	Keystore *keystore.KeyStore
 	logger   = logging.GetHttpdLogger()
 )
 
-func RunServer(store *key_store.KeyStore, port int) {
+func RunServer(store *keystore.KeyStore, port int) {
 	Keystore = store
 	for _, url := range urls {
 		http.HandleFunc(url.Pattern, url.Handler)

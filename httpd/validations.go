@@ -5,16 +5,16 @@ import (
 	"errors"
 	"net/http"
 
-	key_store "github.com/sarthakvk/gokey/internal/key_store"
+	"github.com/sarthakvk/gokey/keystore"
 )
 
-func ValidateKeyStoreCommand(request *http.Request) (*key_store.Command, error) {
+func ValidateKeyStoreCommand(request *http.Request) (*keystore.Command, error) {
 	if request.Method != http.MethodPost {
 		err := errors.New("bad request")
 		return nil, err
 	}
 
-	var cmd key_store.Command
+	var cmd keystore.Command
 	body := request.Body
 
 	err := json.NewDecoder(body).Decode(&cmd)
