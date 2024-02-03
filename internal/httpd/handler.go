@@ -21,7 +21,6 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 		value, ok := Keystore.Get(cmd.Key)
 
 		if !ok {
-			logger.Debug(err.Error())
 			SendResponse(w, http.StatusNotFound, "Not found")
 		} else {
 			SendKeyStoreCommandResponse(w, value)
@@ -56,6 +55,8 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 		} else {
 			SendKeyStoreCommandResponse(w, value, created)
 		}
+	default:
+		SendResponse(w, http.StatusBadRequest, "Invalid command")
 	}
 }
 
