@@ -6,11 +6,13 @@ import (
 	store "github.com/sarthakvk/gokey/internal/key_store"
 )
 
+// Handler for the KeyStore Commands, this is used to perform
+// Operations on our key store
 func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
-	cmd, err := ValidateKeyStoreCommand(req.Body)
+	cmd, err := ValidateKeyStoreCommand(req)
 
 	if err != nil {
-		SendError(w, 400, err.Error())
+		SendResponse(w, 400, err.Error())
 		return
 	}
 
@@ -20,7 +22,7 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 
 		if !ok {
 			logger.Debug(err.Error())
-			SendError(w, http.StatusNotFound, "Not found")
+			SendResponse(w, http.StatusNotFound, "Not found")
 		} else {
 			SendKeyStoreCommandResponse(w, value)
 		}
@@ -30,7 +32,7 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 
 		if err != nil {
 			logger.Debug(err.Error())
-			SendError(w, http.StatusUnprocessableEntity, err.Error())
+			SendResponse(w, http.StatusUnprocessableEntity, err.Error())
 		} else {
 			SendKeyStoreCommandResponse(w, "")
 		}
@@ -40,7 +42,7 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 
 		if err != nil {
 			logger.Debug(err.Error())
-			SendError(w, 401, err.Error())
+			SendResponse(w, 401, err.Error())
 		} else {
 			SendKeyStoreCommandResponse(w, "", true)
 		}
@@ -50,9 +52,24 @@ func HandleKeyStoreCommand(w http.ResponseWriter, req *http.Request) {
 
 		if err != nil {
 			logger.Debug(err.Error())
-			SendError(w, http.StatusUnprocessableEntity, err.Error())
+			SendResponse(w, http.StatusUnprocessableEntity, err.Error())
 		} else {
 			SendKeyStoreCommandResponse(w, value, created)
 		}
 	}
+}
+
+// Handler requests for adding more nodes to the cluster
+func AddReplicaHandler(w http.ResponseWriter, req *http.Request) {
+	validated_data, err := ValidateReplicationRequest(req)
+
+	if err != nil {
+		SendResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	nodeID, addr := validated_data.NodeID, validated_data.Address
+	Keystore.Replicate(nodeID, addr)
+
+	SendResponse(w, http.StatusOK, "Replication started")
 }

@@ -8,6 +8,7 @@ import (
 
 type Operation string
 
+// Operations that can be performed on the KeyStore
 const (
 	GET           Operation = "GET"
 	SET           Operation = "SET"
@@ -29,6 +30,7 @@ func (err *ErrUnknownCommand) Error() string {
 	return fmt.Sprintf("unknown command: %s", err.operation)
 }
 
+// GetCommand: creates an Command object from raw byte data
 func GetCommand(data []byte) (*Command, error) {
 	var cmd Command
 	err := json.Unmarshal(data, &cmd)
@@ -47,6 +49,7 @@ func GetCommand(data []byte) (*Command, error) {
 	}
 }
 
+// getRawCommand reverses the function of GetCommand
 func getRawCommand(cmd Command) ([]byte, error) {
 	raw_cmd, err := json.Marshal(cmd)
 

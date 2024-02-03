@@ -1,22 +1,21 @@
+// This file have the serialization logic
+
 package httpd
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
-
-	key_store "github.com/sarthakvk/gokey/internal/key_store"
 )
 
-type ErrResponse struct {
+type Response struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 
-func SendError(w http.ResponseWriter, code int, message string) {
+func SendResponse(w http.ResponseWriter, code int, message string) {
 	w.WriteHeader(code)
 
-	resp := ErrResponse{
+	resp := Response{
 		Code:    code,
 		Message: message,
 	}
@@ -62,15 +61,7 @@ func SendKeyStoreCommandResponse(w http.ResponseWriter, value string, created ..
 	w.Write(data)
 }
 
-func ValidateKeyStoreCommand(body io.ReadCloser) (*key_store.Command, error) {
-	var cmd key_store.Command
-
-	err := json.NewDecoder(body).Decode(&cmd)
-
-	if err != nil {
-		logger.Debug(err.Error())
-		return nil, err
-	}
-
-	return &cmd, nil
+type ReplicationRequest struct {
+	NodeID  string `json:"node_id"`
+	Address string `json:"address"`
 }
